@@ -46,7 +46,10 @@ public class StudentController {
 
     @GetMapping("list")
     public String showList(Model model) {
-        model.addAttribute("students", studentRepository.findAll());
+        Iterable<Student> all = studentRepository.findAll();
+        if (all.spliterator().getExactSizeIfKnown() != 0) {
+            model.addAttribute("students", all);
+        }
         return "index";
     }
 
@@ -73,7 +76,6 @@ public class StudentController {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid student Id:" + id));
         studentRepository.delete(student);
-        model.addAttribute("students", studentRepository.findAll());
-        return "index";
+        return "redirect:list";
     }
 }
